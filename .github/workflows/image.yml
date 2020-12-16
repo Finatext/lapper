@@ -1,0 +1,34 @@
+name: lapper
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  image:
+    name: Image
+    runs-on: ubuntu-18.04
+    env:
+      IMAGE_NAME: docker.pkg.github.com/finatext/lapper/lapper:beta
+      IMAGE_NAME_LATEST: docker.pkg.github.com/finatext/lapper/lapper:latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - name: Test
+      run: make test
+    - name: Build
+      run: |
+        docker build -t $IMAGE_NAME .
+        docker build -t $IMAGE_NAME_LATEST .
+    - name: Docker Login
+      run: |
+        docker login docker.pkg.github.com -u owner -p ${{ secrets.GITHUB_TOKEN }}
+    - name: Push
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      run: |
+        docker push $IMAGE_NAME
+        docker push $IMAGE_NAME_LATEST
+    timeout-minutes: 5
