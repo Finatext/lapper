@@ -52,4 +52,3 @@ You can use these variables.
 ## Author
 
 [Satoshi Tajima](https://github.com/s-tajima)
-
