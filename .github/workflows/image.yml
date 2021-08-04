@@ -29,7 +29,7 @@ jobs:
       run: |
         docker login docker.pkg.github.com -u owner -p ${{ secrets.GITHUB_TOKEN }}
     - name: Push
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      if: (github.event_name == 'push' && github.ref == 'refs/heads/master') || github.event_name == 'schedule'
       run: |
         docker push $IMAGE_NAME
         docker push $IMAGE_NAME_LATEST
