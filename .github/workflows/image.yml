@@ -11,7 +11,7 @@ on:
 jobs:
   image:
     name: Image
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     env:
       IMAGE_NAME: docker.pkg.github.com/finatext/lapper/lapper:beta
       IMAGE_NAME_LATEST: docker.pkg.github.com/finatext/lapper/lapper:latest
