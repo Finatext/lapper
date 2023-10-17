@@ -18,7 +18,7 @@ jobs:
       IMAGE_NAME: docker.pkg.github.com/finatext/lapper/lapper:beta
       IMAGE_NAME_LATEST: docker.pkg.github.com/finatext/lapper/lapper:latest
     steps:
-    - uses: actions/checkout@v3.5.3
+    - uses: actions/checkout@v4.1.1
       with:
         fetch-depth: 1
     - name: Test
