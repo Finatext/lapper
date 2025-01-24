@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -107,12 +108,19 @@ func (fn *Function) Run() (string, string, error) {
 
 	wg.Wait()
 	err = cmd.Wait()
-	if err != nil {
-		return "", "", fmt.Errorf("Failed to execute command: %s", err)
-	}
-
+	// Before checking command success, we need to collect all the output
 	stdoutBytes := stdout1.String()
 	stderrBytes := stderr1.String()
+
+	if err != nil {
+		var exitError *exec.ExitError
+		if ok := errors.As(err, &exitError); ok {
+			return stdoutBytes, stderrBytes, fmt.Errorf("command failed with exit code %d", exitError.ExitCode())
+		} else {
+			// If this is not an ExitError, it's a unexpected situation
+			return stderrBytes, stderrBytes, fmt.Errorf("failed to execute command: %w", err)
+		}
+	}
 
 	return stdoutBytes, stderrBytes, nil
 }
