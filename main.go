@@ -45,10 +45,10 @@ func HandleEvent(ctx context.Context, payload json.RawMessage) (string, error) {
 	}
 
 	if err != nil {
-		return fmt.Sprintf("Failed"), err
+		return "Failed", err
 	}
 
-	return fmt.Sprintf("Succeeded"), nil
+	return "Succeeded", nil
 }
 
 func getEnv(key, fallback string) string {
