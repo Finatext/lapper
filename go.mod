@@ -9,6 +9,6 @@ require (
 )
 
 require (
-	github.com/gorilla/websocket v1.2.0 // indirect
+	github.com/gorilla/websocket v1.4.1 // indirect
 	github.com/pkg/errors v0.8.0 // indirect
 )
