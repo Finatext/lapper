@@ -71,7 +71,9 @@ func (fn *Function) Run() (string, string, error) {
 		return "", "", fmt.Errorf("Failed to start command: %s", err)
 	}
 
-	stdin.Write(fn.Payload)
+	if _, err := stdin.Write(fn.Payload); err != nil {
+		return "", "", fmt.Errorf("failed to write to stdin: %w", err)
+	}
 	stdin.Close()
 
 	wg := &sync.WaitGroup{}
