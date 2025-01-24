@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  # By default, a workflow only runs when a pull_request event's activity type is opened, synchronize, or reopened.
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request
+  # So we add default event types and ready_for_review type here.
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+permissions:
+  contents: read
+  # Optional: allow read access to pull request. Use with `only-new-issues` option.
+  pull-requests: write
+
+jobs:
+  test:
+    if: github.event.pull_request.draft == false
+    name: Run test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
+        with:
+          go-version-file: go.mod
+      - run: make test
+
+  lint:
+    if: github.event.pull_request.draft == false
+    name: Run lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - name: golangci-lint
+        uses: reviewdog/action-golangci-lint@7708105983c614f7a2725e2172908b7709d1c3e4 # v2.6.2
+        with:
+          github_token: ${{ github.token }}
+          level: error
+          fail_on_error: true
+          reporter: github-pr-review
+          tool_name: golangci-lint
+          go_version_file: go.mod

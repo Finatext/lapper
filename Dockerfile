@@ -1,6 +1,6 @@
-FROM golang:alpine as builder
-ENV APPDIR $GOPATH/src/github.com/Finatext/lapper
-ENV GO111MODULE on
+FROM golang:alpine AS builder
+ENV APPDIR=$GOPATH/src/github.com/Finatext/lapper
+ENV GO111MODULE=on
 RUN apk update && apk add --no-cache git && mkdir -p $APPDIR
 ADD . $APPDIR/
 WORKDIR $APPDIR
