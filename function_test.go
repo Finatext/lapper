@@ -1,11 +1,11 @@
 package main
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 	"testing"
 
-	"github.com/google/gofuzz"
+	fuzz "github.com/google/gofuzz"
 )
 
 func TestRunSimple(t *testing.T) {
@@ -42,7 +42,7 @@ func TestRunSimple(t *testing.T) {
 			t.Errorf("simple case(%d) stdout want: %s, got: %s", i, c.stdout, stdout)
 		}
 
-		rso, _ := ioutil.ReadAll(rstdout)
+		rso, _ := io.ReadAll(rstdout)
 		if string(rso) != c.stdout {
 			t.Errorf("simple case(%d) rstdout want: %s, got: %s", i, c.stdout, rso)
 		}
@@ -51,7 +51,7 @@ func TestRunSimple(t *testing.T) {
 			t.Errorf("simple case(%d) stderr want: %s, got: %s", i, c.stderr, stderr)
 		}
 
-		rse, _ := ioutil.ReadAll(rstderr)
+		rse, _ := io.ReadAll(rstderr)
 		if string(rse) != c.stderr {
 			t.Errorf("simple case(%d) rstderr want: %s, got: %s", i, c.stderr, rse)
 		}
@@ -66,8 +66,8 @@ func TestRunFuzzing(t *testing.T) {
 
 		fn := NewFunction("echo", []string{"-n", str}, []byte("{}"))
 
-		fn.SetStdout(ioutil.Discard)
-		fn.SetStderr(ioutil.Discard)
+		fn.SetStdout(io.Discard)
+		fn.SetStderr(io.Discard)
 
 		stdout, _, _ := fn.Run()
 
