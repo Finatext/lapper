@@ -49,17 +49,17 @@ func (fn *Function) Run() (string, string, error) {
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		return "", "", fmt.Errorf("Failed to open stdout pipe: %s", err)
+		return "", "", fmt.Errorf("failed to open stdout pipe: %s", err)
 	}
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		return "", "", fmt.Errorf("Failed to open stderr pipe: %s", err)
+		return "", "", fmt.Errorf("failed to open stderr pipe: %s", err)
 	}
 
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
-		return "", "", fmt.Errorf("Failed to open stdin pipe: %s", err)
+		return "", "", fmt.Errorf("failed to open stdin pipe: %s", err)
 	}
 
 	var stdout1, stderr1 bytes.Buffer
@@ -68,7 +68,7 @@ func (fn *Function) Run() (string, string, error) {
 
 	err = cmd.Start()
 	if err != nil {
-		return "", "", fmt.Errorf("Failed to start command: %s", err)
+		return "", "", fmt.Errorf("failed to start command: %s", err)
 	}
 
 	if _, err := stdin.Write(fn.Payload); err != nil {
@@ -88,7 +88,7 @@ func (fn *Function) Run() (string, string, error) {
 			fmt.Fprintln(fn.Stdout, scanner.Text())
 		}
 		if err := scanner.Err(); err != nil {
-			fmt.Fprintln(fn.Stderr, "Scan error (stdout):", err)
+			fmt.Fprintln(fn.Stderr, "scan error (stdout):", err)
 		}
 		wg.Done()
 	}()
@@ -103,7 +103,7 @@ func (fn *Function) Run() (string, string, error) {
 			fmt.Fprintln(fn.Stderr, scanner.Text())
 		}
 		if err := scanner.Err(); err != nil {
-			fmt.Fprintln(fn.Stderr, "Scan error (stderr):", err)
+			fmt.Fprintln(fn.Stderr, "scan error (stderr):", err)
 		}
 		wg.Done()
 	}()
