@@ -49,17 +49,17 @@ func (fn *Function) Run() (string, string, error) {
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		return "", "", fmt.Errorf("failed to open stdout pipe: %s", err)
+		return "", "", fmt.Errorf("failed to open stdout pipe: %w", err)
 	}
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		return "", "", fmt.Errorf("failed to open stderr pipe: %s", err)
+		return "", "", fmt.Errorf("failed to open stderr pipe: %w", err)
 	}
 
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
-		return "", "", fmt.Errorf("failed to open stdin pipe: %s", err)
+		return "", "", fmt.Errorf("failed to open stdin pipe: %w", err)
 	}
 
 	var stdout1, stderr1 bytes.Buffer
@@ -68,7 +68,7 @@ func (fn *Function) Run() (string, string, error) {
 
 	err = cmd.Start()
 	if err != nil {
-		return "", "", fmt.Errorf("failed to start command: %s", err)
+		return "", "", fmt.Errorf("failed to start command: %w", err)
 	}
 
 	if _, err := stdin.Write(fn.Payload); err != nil {
