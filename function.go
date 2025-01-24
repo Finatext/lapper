@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -48,17 +49,17 @@ func (fn *Function) Run() (string, string, error) {
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		return "", "", fmt.Errorf("Failed to open stdout pipe: %s", err)
+		return "", "", fmt.Errorf("failed to open stdout pipe: %w", err)
 	}
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		return "", "", fmt.Errorf("Failed to open stderr pipe: %s", err)
+		return "", "", fmt.Errorf("failed to open stderr pipe: %w", err)
 	}
 
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
-		return "", "", fmt.Errorf("Failed to open stdin pipe: %s", err)
+		return "", "", fmt.Errorf("failed to open stdin pipe: %w", err)
 	}
 
 	var stdout1, stderr1 bytes.Buffer
@@ -67,10 +68,12 @@ func (fn *Function) Run() (string, string, error) {
 
 	err = cmd.Start()
 	if err != nil {
-		return "", "", fmt.Errorf("Failed to start command: %s", err)
+		return "", "", fmt.Errorf("failed to start command: %w", err)
 	}
 
-	stdin.Write(fn.Payload)
+	if _, err := stdin.Write(fn.Payload); err != nil {
+		return "", "", fmt.Errorf("failed to write to stdin: %w", err)
+	}
 	stdin.Close()
 
 	wg := &sync.WaitGroup{}
@@ -85,7 +88,7 @@ func (fn *Function) Run() (string, string, error) {
 			fmt.Fprintln(fn.Stdout, scanner.Text())
 		}
 		if err := scanner.Err(); err != nil {
-			fmt.Fprintln(fn.Stderr, "Scan error (stdout):", err)
+			fmt.Fprintln(fn.Stderr, "scan error (stdout):", err)
 		}
 		wg.Done()
 	}()
@@ -100,19 +103,26 @@ func (fn *Function) Run() (string, string, error) {
 			fmt.Fprintln(fn.Stderr, scanner.Text())
 		}
 		if err := scanner.Err(); err != nil {
-			fmt.Fprintln(fn.Stderr, "Scan error (stderr):", err)
+			fmt.Fprintln(fn.Stderr, "scan error (stderr):", err)
 		}
 		wg.Done()
 	}()
 
 	wg.Wait()
 	err = cmd.Wait()
-	if err != nil {
-		return "", "", fmt.Errorf("Failed to execute command: %s", err)
-	}
-
+	// Before checking command success, we need to collect all the output
 	stdoutBytes := stdout1.String()
 	stderrBytes := stderr1.String()
+
+	if err != nil {
+		var exitError *exec.ExitError
+		if ok := errors.As(err, &exitError); ok {
+			return stdoutBytes, stderrBytes, fmt.Errorf("command failed with exit code %d", exitError.ExitCode())
+		} else {
+			// If this is not an ExitError, it's a unexpected situation
+			return stderrBytes, stderrBytes, fmt.Errorf("failed to execute command: %w", err)
+		}
+	}
 
 	return stdoutBytes, stderrBytes, nil
 }

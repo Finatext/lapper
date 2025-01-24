@@ -39,14 +39,16 @@ func HandleEvent(ctx context.Context, payload json.RawMessage) (string, error) {
 			(notifyCond == "exitcode" && err != nil)) {
 
 		af := buildSlackAttachmentFields(os.Getenv("AWS_LAMBDA_FUNCTION_NAME"), lc.AwsRequestID, stdout, stderr, err)
-		postSlack(slackWebhookURL, af)
+		if err := postSlack(slackWebhookURL, af); err != nil {
+			return "Failed", fmt.Errorf("Lapper failed to post a message to slack: %w", err)
+		}
 	}
 
 	if err != nil {
-		return fmt.Sprintf("Failed"), err
+		return "Failed", err
 	}
 
-	return fmt.Sprintf("Succeeded"), nil
+	return "Succeeded", nil
 }
 
 func getEnv(key, fallback string) string {
