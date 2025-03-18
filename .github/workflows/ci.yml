@@ -18,6 +18,7 @@ permissions:
 
 jobs:
   test:
+    timeout-minutes: 10
     if: github.event.pull_request.draft == false
     name: Run test
     runs-on: ubuntu-latest
@@ -29,6 +30,7 @@ jobs:
       - run: make test
 
   lint:
+    timeout-minutes: 10
     if: github.event.pull_request.draft == false
     name: Run lint
     runs-on: ubuntu-latest
@@ -39,7 +41,7 @@ jobs:
         with:
           github_token: ${{ github.token }}
           level: error
-          fail_on_error: true
+          fail_level: error
           reporter: github-pr-review
           tool_name: golangci-lint
           go_version_file: go.mod
