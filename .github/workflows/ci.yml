@@ -13,8 +13,7 @@ on:
 
 permissions:
   contents: read
-  # Optional: allow read access to pull request. Use with `only-new-issues` option.
-  pull-requests: write
+  pull-requests: read
 
 jobs:
   test:
@@ -37,11 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: golangci-lint
-        uses: reviewdog/action-golangci-lint@dd3fda91790ca90e75049e5c767509dc0ec7d99b # v2.7.0
+        uses: golangci/golangci-lint-action@1481404843c368bc19ca9406f87d6e0fc97bdcfd # v7.0.0
         with:
-          github_token: ${{ github.token }}
-          level: error
-          fail_level: error
-          reporter: github-pr-review
-          tool_name: golangci-lint
-          go_version_file: go.mod
+          only-new-issues: true
+
