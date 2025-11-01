@@ -3,7 +3,7 @@ module github.com/lapper
 go 1.23
 
 require (
-	github.com/aws/aws-lambda-go v1.49.0
+	github.com/aws/aws-lambda-go v1.50.0
 	github.com/google/gofuzz v1.2.0
 	github.com/nlopes/slack v0.6.0
 )
