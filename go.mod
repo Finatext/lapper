@@ -1,9 +1,9 @@
 module github.com/lapper
 
-go 1.23
+go 1.26
 
 require (
-	github.com/aws/aws-lambda-go v1.54.0
+	github.com/aws/aws-lambda-go v1.55.0
 	github.com/google/gofuzz v1.2.0
 	github.com/nlopes/slack v0.6.0
 )
